@@ -46,7 +46,7 @@ public class Preferences extends javax.swing.JDialog {
         for (int i = 0, n = looks.length; i < n; i++) {
             String tmp = looks[i].getName();
             UI_lanf_model.addElement(tmp);
-            if (Config.getLandf().equals(tmp)) {
+            if (Config.getInstance().getLandf().equals(tmp)) {
                 jComboBox1.setSelectedItem(tmp);
             }
         }
@@ -58,14 +58,14 @@ public class Preferences extends javax.swing.JDialog {
         LinuxFormatComboModel.addElement("MM/DD/YYYY 23:59:59");
         LinuxFormatComboModel.addElement("DD/MM/YYYY 23:59:59");
         LinuxFormatComboModel.addElement("YYYY-MM-DD 23:59:59");
-        jComboBox3.setSelectedItem(Config.getLinuxDateFormat());
+        jComboBox3.setSelectedItem(Config.getInstance().getLinuxDateFormat());
     }
     
     private void load_pageformat() {
         PageFormatComboBox.addElement("A4");
         PageFormatComboBox.addElement("LETTER");
         PageFormatComboBox.addElement("LEGAL");
-        jComboBox2.setSelectedItem(Config.getPDFPageFormat());
+        jComboBox2.setSelectedItem(Config.getInstance().getPDFPageFormat());
         
     }
     /** This method is called from within the constructor to
@@ -226,7 +226,7 @@ public class Preferences extends javax.swing.JDialog {
                     if (lafClassName.equals(laf.getName())) {
                         try {
                             UIManager.setLookAndFeel(laf.getClassName());
-                            SwingUtilities.updateComponentTreeUI(GlobalOptions.getUI());
+                            SwingUtilities.updateComponentTreeUI(GlobalOptions.getInstance().getUI());
                         } catch (Exception e) {
                         }
 
@@ -238,12 +238,12 @@ public class Preferences extends javax.swing.JDialog {
     }//GEN-LAST:event_jComboBox1ActionPerformed
 
     private void OkButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_OkButtonActionPerformed
-        Config.setLandf(jComboBox1.getSelectedItem().toString());
-        Config.setPDFPageFormat(jComboBox2.getSelectedItem().toString());
-        Config.setImageHeight((Integer)jSpinner2.getModel().getValue());
-        Config.setImageWidth((Integer)jSpinner1.getModel().getValue());
-        Config.setLinuxDateFormat(jComboBox3.getSelectedItem().toString());
-        Config.save();
+        Config.getInstance().setLandf(jComboBox1.getSelectedItem().toString());
+        Config.getInstance().setPDFPageFormat(jComboBox2.getSelectedItem().toString());
+        Config.getInstance().setImageHeight((Integer)jSpinner2.getModel().getValue());
+        Config.getInstance().setImageWidth((Integer)jSpinner1.getModel().getValue());
+        Config.getInstance().setLinuxDateFormat(jComboBox3.getSelectedItem().toString());
+
         dispose();
     }//GEN-LAST:event_OkButtonActionPerformed
 
@@ -281,6 +281,6 @@ public class Preferences extends javax.swing.JDialog {
     DefaultComboBoxModel UI_lanf_model = new DefaultComboBoxModel();
     DefaultComboBoxModel PageFormatComboBox = new DefaultComboBoxModel();
     DefaultComboBoxModel LinuxFormatComboModel = new DefaultComboBoxModel();
-    SpinnerNumberModel imageWidthSpinner = new javax.swing.SpinnerNumberModel(Config.getImageWidth(), Integer.valueOf(1), null, Integer.valueOf(1));
-    SpinnerNumberModel imageHeightSpinner = new javax.swing.SpinnerNumberModel(Config.getImageHeight(), Integer.valueOf(1), null, Integer.valueOf(1));
+    SpinnerNumberModel imageWidthSpinner = new javax.swing.SpinnerNumberModel(Config.getInstance().getImageWidth(), Integer.valueOf(1), null, Integer.valueOf(1));
+    SpinnerNumberModel imageHeightSpinner = new javax.swing.SpinnerNumberModel(Config.getInstance().getImageHeight(), Integer.valueOf(1), null, Integer.valueOf(1));
 }

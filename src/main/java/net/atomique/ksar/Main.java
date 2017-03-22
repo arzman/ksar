@@ -19,11 +19,7 @@ import net.atomique.ksar.UI.SplashScreen;
  */
 public class Main {
 
-    static Config config = null;
-    static GlobalOptions globaloptions = null;
-    static ResourceBundle resource = ResourceBundle.getBundle("net/atomique/ksar/Language/Message");
 
-    ;
 
     public static void usage() {
         show_version();
@@ -35,7 +31,7 @@ public class Main {
 
     private static void set_lookandfeel() {
         for (UIManager.LookAndFeelInfo laf : UIManager.getInstalledLookAndFeels()) {
-            if (Config.getLandf().equals(laf.getName())) {
+            if (Config.getInstance().getLandf().equals(laf.getName())) {
                 try {
                     UIManager.setLookAndFeel(laf.getClassName());
                 } catch (ClassNotFoundException ex) {
@@ -66,10 +62,10 @@ public class Main {
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
 
             public void run() {
-                GlobalOptions.setUI(new Desktop());
-                SwingUtilities.updateComponentTreeUI(GlobalOptions.getUI());
-                GlobalOptions.getUI().add_window();
-                GlobalOptions.getUI().maxall();
+                GlobalOptions.getInstance().setUI(new Desktop());
+                SwingUtilities.updateComponentTreeUI(GlobalOptions.getInstance().getUI());
+                GlobalOptions.getInstance().getUI().add_window();
+                GlobalOptions.getInstance().getUI().maxall();
             }
         });
 
@@ -86,13 +82,11 @@ public class Main {
             System.setProperty("apple.laf.useScreenMenuBar", "true");
         }
 
-        config = Config.getInstance();
-        globaloptions = GlobalOptions.getInstance();
-
-
-
         if (args.length > 0) {
-            while (i < args.length && args[i].startsWith("-")) {
+            
+        	ResourceBundle resource = ResourceBundle.getBundle("net/atomique/ksar/Language/Message");
+        	
+        	while (i < args.length && args[i].startsWith("-")) {
                 arg = args[i++];
                 if ("-version".equals(arg)) {
                     show_version();
@@ -103,12 +97,12 @@ public class Main {
                     continue;
                 }
                 if ("-test".equals(arg)) {
-                    GlobalOptions.setDodebug(true);
+                    GlobalOptions.getInstance().setDodebug(true);
                     continue;
                 }
                 if ("-input".equals(arg)) {
                     if (i < args.length) {
-                        GlobalOptions.setCLfilename(args[i++]);
+                        GlobalOptions.getInstance().setCLfilename(args[i++]);
                     } else {
                         exit_error(resource.getString("INPUT_REQUIRE_ARG"));
                     }
@@ -118,10 +112,6 @@ public class Main {
         }
 
         make_ui();
-
-
-
-        System.out.println("exit");
     }
 
     public static void exit_error(final String message) {

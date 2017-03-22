@@ -103,10 +103,10 @@ public class XMLConfig extends DefaultHandler {
     }
 
     public void dump_XML() {
-        SortedSet<String> sortedset = new TreeSet<String>(GlobalOptions.getOSlist().keySet());
+        SortedSet<String> sortedset = new TreeSet<String>(GlobalOptions.getInstance().getOSlist().keySet());
         Iterator<String> it = sortedset.iterator();
         while (it.hasNext()) {
-            OSConfig tmp = (OSConfig) GlobalOptions.getOSlist().get(it.next());
+            OSConfig tmp = (OSConfig) GlobalOptions.getInstance().getOSlist().get(it.next());
             System.out.println("-OS-" + tmp.getOSname());
             SortedSet<String> sortedset2 = new TreeSet<String>(tmp.getStatHash().keySet());
             Iterator<String> it2 = sortedset2.iterator();
@@ -188,10 +188,10 @@ public class XMLConfig extends DefaultHandler {
         // OS
         if (in_OS) {
             if ("OSType".equals(qName)) {
-                currentOS = GlobalOptions.getOSlist().get(attributes.getValue("name"));
+                currentOS = GlobalOptions.getInstance().getOSlist().get(attributes.getValue("name"));
                 if (currentOS == null) {
                     currentOS = new OSConfig(attributes.getValue("name"));
-                    GlobalOptions.getOSlist().put(currentOS.getOSname(), currentOS);
+                    GlobalOptions.getInstance().getOSlist().put(currentOS.getOSname(), currentOS);
                 }
             }
             if (currentOS != null) {
@@ -307,7 +307,7 @@ public class XMLConfig extends DefaultHandler {
 
         if ("itemcolor".equals(qName)) {
             if (currentColor.is_valid()) {
-                GlobalOptions.getColorlist().put(currentColor.getData_title(), currentColor);
+                GlobalOptions.getInstance().getColorlist().put(currentColor.getData_title(), currentColor);
             } else {
                 System.err.println("Err: " + currentColor.getError_message());
                 currentColor = null;
@@ -328,7 +328,7 @@ public class XMLConfig extends DefaultHandler {
         }
         if ("cnx".equals(qName)) {
             if (currentCnx.isValid()) {
-                GlobalOptions.getHistoryList().put(currentCnx.getLink(), currentCnx);
+                GlobalOptions.getInstance().getHistoryList().put(currentCnx.getLink(), currentCnx);
             } else {
                 System.err.println("Err cnx is not valid");
                 currentCnx = null;
@@ -346,7 +346,7 @@ public class XMLConfig extends DefaultHandler {
             }
         }
         if ( "host".equals(qName)) {
-            GlobalOptions.getHostInfoList().put(currentHost.getHostname(), currentHost);
+            GlobalOptions.getInstance().getHostInfoList().put(currentHost.getHostname(), currentHost);
             currentHost=null;
         }
     }

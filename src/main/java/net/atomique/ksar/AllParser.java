@@ -10,113 +10,118 @@ import net.atomique.ksar.XML.OSConfig;
 
 public abstract class AllParser {
 
-     
+	protected String sarStartDate;
+	protected String sarEndDate;
 
-    public AllParser () {
+	protected LocalDateTime startofgraph;
+	protected LocalDateTime endofgraph;
+	protected TreeSet<LocalDateTime> DateSamples;
+	protected int firstdatacolumn = 0;
 
-    }
+	abstract public String getInfo();
 
-    public void init (kSar hissar, String header) {
-        String [] s = header.split("\\s+");
-        mysar = hissar;
-        ParserName = s[0];
-        parse_header(header);
-    }
+	abstract public void parse_header(String s);
 
-    public AllParser(kSar hissar, String header) {
-        init(hissar, header);
-    }
+	abstract public void updateUITitle();
 
-    public int parse(String line, String[] columns) {
-        System.err.println("not implemented");
-        return -1;
-    }
+	protected kSar mysar;
+	protected OSConfig myosconfig;
+	protected String ParserName;
 
-    public LocalDateTime get_startofgraph() {
-        return startofgraph;
-    }
+	protected LocalTime parsetime;
+	protected LocalDate parsedate;
 
-    public LocalDateTime get_endofgraph() {
-        return endofgraph;
-    }
+	protected String currentStat;
+	protected String dateFormat;
+	protected String timeFormat;
+	protected int timeColumn;
 
-    public String getParserName() {
-        return ParserName;
-    }
+	public AllParser() {
 
-     public boolean setDate(String s) {
-         LocalDate currentDate;
-         LocalDate startDate;
-         LocalDate endDate;
-        
-        if (sarStartDate == null) {
-            sarStartDate = s;
-        }
-        if (sarEndDate == null) {
-            sarEndDate = s;
-        }
-        
-        try {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateFormat);
-            currentDate = LocalDate.parse(s, formatter);
+		DateSamples = new TreeSet<LocalDateTime>();
+		dateFormat = Config.getInstance().getDateFormat();
+		timeFormat = "HH:mm:ss";
+		currentStat = "NONE";
+		timeColumn = 1;
+	}
 
-            parsedate = currentDate;
+	public void init(kSar hissar, String header) {
+		String[] s = header.split("\\s+");
+		mysar = hissar;
+		ParserName = s[0];
+		parse_header(header);
+	}
 
-            startDate = LocalDate.parse(sarStartDate, formatter);
-            endDate = LocalDate.parse(sarEndDate, formatter);
+	public AllParser(kSar hissar, String header) {
+		init(hissar, header);
+	}
 
-        } catch (DateTimeParseException ex) {
-            System.out.println("unable to parse date " + s);
-            return false;
-        }
+	public int parse(String line, String[] columns) {
+		System.err.println("not implemented");
+		return -1;
+	}
 
-        if (currentDate.compareTo(startDate) < 0) {
-            sarStartDate = s;
-        }
-        if (currentDate.compareTo(endDate) > 0) {
-            sarEndDate = s;
-        }
-        return true;
-    }
+	public LocalDateTime get_startofgraph() {
+		return startofgraph;
+	}
 
-     public String getDate() {
-        if (sarStartDate.equals(sarEndDate)) {
-            return sarStartDate;
-        } else {
-            return sarStartDate + " to " + sarEndDate;
-        }
-    }
+	public LocalDateTime get_endofgraph() {
+		return endofgraph;
+	}
 
-    public TreeSet<LocalDateTime> getDateSamples() {
-        return DateSamples;
-    }
+	public String getParserName() {
+		return ParserName;
+	}
 
-    public String getCurrentStat() {
-        return currentStat;
-    }
+	public boolean setDate(String s) {
+		LocalDate currentDate;
+		LocalDate startDate;
+		LocalDate endDate;
 
+		if (sarStartDate == null) {
+			sarStartDate = s;
+		}
+		if (sarEndDate == null) {
+			sarEndDate = s;
+		}
 
-    protected String sarStartDate = null;
-    protected String sarEndDate = null;
+		try {
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateFormat);
+			currentDate = LocalDate.parse(s, formatter);
 
-    protected LocalDateTime startofgraph = null;
-    protected LocalDateTime endofgraph =null;
-    protected TreeSet<LocalDateTime> DateSamples = new TreeSet<LocalDateTime>();
-    protected int firstdatacolumn =0;
+			parsedate = currentDate;
 
-    abstract public String getInfo();
-    abstract public void parse_header(String s);
-    abstract public void updateUITitle();
-     
-    protected kSar mysar = null;
-    protected OSConfig myosconfig = null;
-    protected String ParserName = null;
+			startDate = LocalDate.parse(sarStartDate, formatter);
+			endDate = LocalDate.parse(sarEndDate, formatter);
 
-    protected LocalTime parsetime = null;
-    protected LocalDate parsedate = null;
+		} catch (DateTimeParseException ex) {
+			System.out.println("unable to parse date " + s);
+			return false;
+		}
 
-    protected String currentStat = "NONE";
-    protected String dateFormat = "MM/dd/yy";
-    protected String timeFormat = "HH:mm:ss";
-    protected int timeColumn = 1;
+		if (currentDate.compareTo(startDate) < 0) {
+			sarStartDate = s;
+		}
+		if (currentDate.compareTo(endDate) > 0) {
+			sarEndDate = s;
+		}
+		return true;
+	}
+
+	public String getDate() {
+		if (sarStartDate.equals(sarEndDate)) {
+			return sarStartDate;
+		} else {
+			return sarStartDate + " to " + sarEndDate;
+		}
+	}
+
+	public TreeSet<LocalDateTime> getDateSamples() {
+		return DateSamples;
+	}
+
+	public String getCurrentStat() {
+		return currentStat;
+	}
+
 }

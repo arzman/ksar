@@ -26,12 +26,12 @@ public class SunOS extends OSParser {
         setCpuType(columns[4]);
         setDate(columns[5]);
         
-        if (GlobalOptions.hasUI()) {
-            HostInfo tmphostinfo = GlobalOptions.getHostInfo(this.gethostName());
+        if (GlobalOptions.getInstance().hasUI()) {
+            HostInfo tmphostinfo = GlobalOptions.getInstance().getHostInfo(this.gethostName());
             if (tmphostinfo == null) {
                 tmphostinfo = new HostInfo(this.gethostName());
             }
-            HostInfoView tmpview = new HostInfoView(GlobalOptions.getUI(), tmphostinfo);
+            HostInfoView tmpview = new HostInfoView(GlobalOptions.getInstance().getUI(), tmphostinfo);
             tmpview.setVisible(true);
            
         }
@@ -124,7 +124,7 @@ public class SunOS extends OSParser {
 
         if (lastStat != null) {
             if (!lastStat.equals(currentStat)) {
-                if (GlobalOptions.isDodebug()) {
+                if (GlobalOptions.getInstance().isDodebug()) {
                     System.out.println("Stat change from " + lastStat + " to " + currentStat);
                 }
                 lastStat = currentStat;

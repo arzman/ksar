@@ -23,23 +23,8 @@ public class VersionNumber {
     }
 
     VersionNumber() {
-        StringBuilder tmpstr = new StringBuilder();
-        BufferedReader reader = null;
-        try {
-            InputStream is = this.getClass().getResourceAsStream("/kSar.version");
-            InputStreamReader isr = new InputStreamReader(is);
-            reader = new BufferedReader(isr);
-            String line = "";
-            while ((line = reader.readLine()) != null) {
-                tmpstr.append(line);
-            }
-            reader.close();
-        } catch (IOException e) {
-            System.err.println("Unable to read Current version");
-            return;
-        }
-        setVersionNumber(tmpstr.toString());
-        return;
+        
+        setVersionNumber(Config.getInstance().getVersionNumber());
     }
 
     public void setVersionNumber(String version) {

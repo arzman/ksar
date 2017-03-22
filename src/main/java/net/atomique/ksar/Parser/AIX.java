@@ -111,7 +111,7 @@ public class AIX extends OSParser {
 
         if (lastStat != null) {
             if (!lastStat.equals(currentStat) ) {
-                if (  GlobalOptions.isDodebug())  {
+                if (  GlobalOptions.getInstance().isDodebug())  {
                 System.out.println("Stat change from " + lastStat + " to " + currentStat);
                 }
                 lastStat = currentStat;

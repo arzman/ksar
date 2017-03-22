@@ -19,6 +19,8 @@ import java.util.logging.Logger;
 import javax.swing.JDesktopPane;
 import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
+
+import net.atomique.ksar.Config;
 import net.atomique.ksar.GlobalOptions;
 import net.atomique.ksar.kSar;
 
@@ -287,6 +289,7 @@ public class Desktop extends javax.swing.JFrame {
     private void tryToQuit() {
         int i = JOptionPane.showConfirmDialog(this, "Are you sure you want to exit kSar ?", "Confirm", JOptionPane.YES_NO_OPTION);
         if (i == JOptionPane.YES_OPTION) {
+        	Config.getInstance().saveConfig();
             System.exit(0);
         }
     }

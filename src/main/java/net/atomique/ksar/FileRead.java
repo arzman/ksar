@@ -21,18 +21,17 @@ public class FileRead extends Thread {
     public FileRead(kSar hissar) {
         mysar = hissar;
         JFileChooser fc = new JFileChooser();
-        if (Config.getLastReadDirectory() != null) {
-            fc.setCurrentDirectory(Config.getLastReadDirectory());
+        if (Config.getInstance().getLastReadDirectory() != null) {
+            fc.setCurrentDirectory(Config.getInstance().getLastReadDirectory());
         }
         int returnVal = fc.showDialog(null, "Open");
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             sarfilename = fc.getSelectedFile().getAbsolutePath();
             if (fc.getSelectedFile().isDirectory()) {
-                Config.setLastReadDirectory(fc.getSelectedFile());
+                Config.getInstance().setLastReadDirectory(fc.getSelectedFile());
             } else {
-                Config.setLastReadDirectory(fc.getSelectedFile().getParentFile());
+                Config.getInstance().setLastReadDirectory(fc.getSelectedFile().getParentFile());
             }
-            Config.save();
         }
     }
 

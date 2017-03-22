@@ -109,6 +109,11 @@ public class Graph {
         //System.out.println("graph parsing:" + s);
         for (int i = skipColumn; i < HeaderStr.length; i++) {
             try {
+            	//convert , to .
+            	if(cols[i].contains(",")){
+            		cols[i] = cols[i].replace(',', '.');
+            	}
+            	
                 colvalue = new Double(cols[i]);
             } catch (NumberFormatException ne) {
                 System.out.println(graphtitle + " " + cols[i] + " is NaN");
@@ -201,7 +206,7 @@ public class Graph {
                     if (oldval == null) {
                         return false;
                     }
-                    ColumnConfig colconfig = GlobalOptions.getColumnConfig(colheader);
+                    ColumnConfig colconfig = GlobalOptions.getInstance().getColumnConfig(colheader);
                     if ( colconfig == null ) {
                         return false;
                     }
@@ -387,7 +392,7 @@ public class Graph {
                 NumberAxis graphaxistitle = tmp.getAxis();
                 XYPlot temp_plot = new XYPlot(tmp2, axisofdate, graphaxistitle, renderer);
                 for (int i = 0; i < tmp2.getSeriesCount(); i++) {
-                    Color color = GlobalOptions.getDataColor(tmp2.getSeriesKey(i).toString());
+                    Color color = GlobalOptions.getInstance().getDataColor(tmp2.getSeriesKey(i).toString());
                     if (color != null) {
                         renderer.setSeriesPaint(i, color);
                         renderer.setBaseStroke(new BasicStroke(1.0F));
@@ -412,7 +417,7 @@ public class Graph {
                 continue;
             }
             for (int i = 0; i < s.length; i++) {
-                Color color = GlobalOptions.getDataColor(s[i].toString());
+                Color color = GlobalOptions.getInstance().getDataColor(s[i].toString());
                 if (color != null) {
                     renderer.setSeriesPaint(i, color);
                     renderer.setBaseStroke(new BasicStroke(1.0F));
@@ -433,7 +438,7 @@ public class Graph {
         JFreeChart mychart = new JFreeChart(graphtitle, Config.getDEFAULT_FONT(), plot, true);
         long endgenerate = System.currentTimeMillis();
         mychart.setBackgroundPaint(Color.white);
-        if (GlobalOptions.isDodebug()) {
+        if (GlobalOptions.getInstance().isDodebug()) {
             System.out.println("graph generation: " + (endgenerate - begingenerate) + " ms");
         }
         return mychart;

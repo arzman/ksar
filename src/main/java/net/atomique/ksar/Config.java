@@ -5,236 +5,248 @@
 package net.atomique.ksar;
 
 import java.awt.Font;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.security.CodeSource;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Properties;
-import java.util.prefs.BackingStoreException;
-import java.util.prefs.Preferences;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javax.swing.UIManager;
 
 /**
  *
- * @author Max
+ * @author Max and Arthur
  */
 public class Config {
 
-    private static Preferences myPref;
-    private static Config instance = new Config();
+	private Properties myPref;
 
-    public static Config getInstance() {
-        return instance;
-    }
+	private static Config instance;
 
-    Config() {
-        myPref = Preferences.userNodeForPackage(Config.class);
-        if (myPref.getInt("local_configfile", -1) == -1) {
-            // new
-            try {
-                myPref.clear();
-                myPref.flush();
-            } catch (BackingStoreException e) {
-            }
-            local_configfile = store_configdir();
-            myPref.putInt("local_configfile", local_configfile);
-            
-        }
-        load();
-    }
+	private File configfolder;
 
-    private static void load() {
-        /*
-         * load default value or stored value
-         */
-        setLandf(myPref.get("landf", UIManager.getLookAndFeel().getName()));
-        setLastReadDirectory(myPref.get("lastReadDirectory", null));
-        setLastExportDirectory(myPref.get("lastExportDirectory", null));
+	public static final Font DEFAULT_FONT = new Font("SansSerif", Font.BOLD, 18);
 
-        setImageHeight(myPref.getInt("ImageHeight", 600));
-        setImageWidth(myPref.getInt("ImageWidth", 800));
-        setPDFPageFormat(myPref.get("PDFPageFormat","A4"));
-        setLinuxDateFormat(myPref.get("LinuxDateFormat","Always ask"));
+	public static Config getInstance() {
 
-        setNumber_host_history(myPref.getInt("HostHistory", 0));
-        for (int i = 0; i < getNumber_host_history(); i++) {
-            host_history.add(myPref.get("HostHistory_" + i, null));
-        }
-        setLocal_configfile(myPref.getInt("local_configfile", -1));
-    }
+		if (instance == null) {
+			try {
+				instance = new Config();
+			} catch (URISyntaxException e) {
+				// FATALITY
+				e.printStackTrace();
+			}
+		}
 
-    public static void save() {
-        if (myPref == null) {
-            return;
-        }
-        myPref.put("landf", landf);
-        if (lastReadDirectory != null) {
-            myPref.put("lastReadDirectory", lastReadDirectory.toString());
-        }
-        if (lastExportDirectory != null) {
-            myPref.put("lastExportDirectory", lastExportDirectory.toString());
-        }
+		return instance;
+	}
 
-        myPref.putInt("ImageHeight", ImageHeight);
-        myPref.putInt("ImageWidth", ImageWidth);
-        myPref.put("PDFPageFormat", PDFPageFormat);
-        myPref.put("LinuxDateFormat", LinuxDateFormat);
+	private Config() throws URISyntaxException {
 
-        for (int i = 0; i < host_history.size(); i++) {
-            myPref.put("HostHistory_" + i, host_history.get(i));
-        }
-        myPref.putInt("HostHistory", host_history.size());
+		// config is stored next to the jar file
+		CodeSource codeSource = Main.class.getProtectionDomain().getCodeSource();
+		File jarFile = new File(codeSource.getLocation().toURI().getPath());
+		String jarDir = jarFile.getParentFile().getPath();
 
-        myPref.putInt("local_configfile", local_configfile);
+		configfolder = new File(jarDir + File.separator + "ksarcfg");
 
-    }
+		if (!configfolder.exists()) {
+			configfolder.mkdirs();
+		}
 
-    public static String getLandf() {
-        return landf;
-    }
+		// use .properties file to store config
+		myPref = new Properties();
 
-    public static void setLandf(String landf) {
-        Config.landf = landf;
-    }
+		try {
+			FileInputStream input = new FileInputStream(
+					configfolder.getAbsolutePath() + File.separator + "config.properties");
+			// load a properties file
+			myPref.load(input);
 
-    public static File getLastReadDirectory() {
-        return lastReadDirectory;
-    }
+		} catch (IOException e) {
+			// load defaut properties
+			myPref.setProperty("lookAndFeel", UIManager.getLookAndFeel().getName());
+			myPref.setProperty("lastReadDirectory", "");
+			myPref.setProperty("IgnoreLinesBeginingWith", "Average:@|@##@|@Summary@|@Moyenne");
+			myPref.setProperty("HeaderDateFormat", "DD/MM/YYYY");
+			myPref.setProperty("VersionNumber","0.0.0");
+		}
 
-    public static void setLastReadDirectory(String lastReadDirectory) {
-        if (lastReadDirectory != null) {
-            Config.lastReadDirectory = new File(lastReadDirectory);
-        }
-    }
+	}
 
-    public static void setLastReadDirectory(File lastReadDirectory) {
-        Config.lastReadDirectory = lastReadDirectory;
-    }
+	public void saveConfig() {
 
-    public static File getLastExportDirectory() {
-        return lastReadDirectory;
-    }
+		try (FileOutputStream output = new FileOutputStream(
+				configfolder.getAbsolutePath() + File.separator + "config.properties")) {
 
-    public static void setLastExportDirectory(String lastExportDirectory) {
-        if (lastExportDirectory != null) {
-            Config.lastExportDirectory = new File(lastExportDirectory);
-        }
-    }
+			// save properties to project root folder
+			myPref.store(output, null);
 
-    public static void setLastExportDirectory(File lastExportDirectory) {
-        Config.lastExportDirectory = lastExportDirectory;
-    }
+		} catch (IOException e) {
+			Logger.getLogger(Config.class.getName()).log(Level.WARNING, "Unable to save configuration file", e);
+		}
+	}
 
-    public static String getLastCommand() {
-        return lastCommand;
-    }
+	public String getLandf() {
+		return myPref.getProperty("lookAndFeel");
+	}
 
-    public static void setLastCommand(String lastCommand) {
-        Config.lastCommand = lastCommand;
-    }
+	public void setLandf(String landf) {
+		myPref.setProperty("lookAndFeel", landf);
+	}
 
-    public static ArrayList<String> getHost_history() {
-        return host_history;
-    }
+	public File getLastReadDirectory() {
+		return new File(myPref.getProperty("lastReadDirectory"));
+	}
 
-    public static void addHost_history(String e) {
-        host_history.add(e);
-    }
+	public void setLastReadDirectory(String lastReadDirectory) {
+		if (lastReadDirectory != null && !lastReadDirectory.trim().isEmpty()) {
+			myPref.put("lastReadDirectory", lastReadDirectory);
+		}
+	}
 
-    public static int getNumber_host_history() {
-        return number_host_history;
-    }
+	public void setLastReadDirectory(File lastReadDirectory) {
+		if (lastReadDirectory != null) {
+			setLastReadDirectory(lastReadDirectory.toString());
+		}
+	}
 
-    public static void setNumber_host_history(int number_host_history) {
-        Config.number_host_history = number_host_history;
-    }
+	public File getLastExportDirectory() {
+		return new File(myPref.getProperty("lastExportDirectory", ""));
+	}
 
-    public static Font getDEFAULT_FONT() {
-        return DEFAULT_FONT;
-    }
+	public void setLastExportDirectory(String lastExportDirectory) {
+		if (lastExportDirectory != null && !lastExportDirectory.trim().isEmpty()) {
+			myPref.put("lastExportDirectory", lastExportDirectory);
+		}
+	}
 
-    public static int getImageHeight() {
-        return ImageHeight;
-    }
+	public void setLastExportDirectory(File lastExportDirectory) {
+		if (lastExportDirectory != null) {
+			setLastExportDirectory(lastExportDirectory.toString());
+		}
+	}
 
-    public static void setImageHeight(int ImageHeight) {
-        Config.ImageHeight = ImageHeight;
-    }
+	public String getLastCommand() {
+		return myPref.getProperty("lastCommand", "");
+	}
 
-    public static int getImageWidth() {
-        return ImageWidth;
-    }
+	public void setLastCommand(String lastCommand) {
+		myPref.put("lastCommand", lastCommand);
+	}
 
-    public static void setImageWidth(int ImageWidth) {
-        Config.ImageWidth = ImageWidth;
-    }
+	public ArrayList<String> getHost_history() {
 
-    public static String getPDFPageFormat() {
-        return PDFPageFormat;
-    }
+		ArrayList<String> hostHistory = new ArrayList<>();
 
-    public static void setPDFPageFormat(String PDFPageFormat) {
-        Config.PDFPageFormat = PDFPageFormat;
-    }
+		int size = 0;
+		try {
+			Integer.parseInt(myPref.getProperty("HostHistory", "0"));
+		} catch (NumberFormatException e) {
+			// it's ok to fail
+		}
 
-    
+		for (int i = 0; i < size; i++) {
+			hostHistory.add(myPref.getProperty("HostHistory_" + i, ""));
+		}
 
-    public static int store_configdir() {
-        Properties systemprops = System.getProperties();
-        String userhome = (String) systemprops.get("user.home") + systemprops.get("file.separator");
-        String username = (String) systemprops.get("user.name");
-        String fileseparator = (String) systemprops.get("file.separator");
-        // mkdir userhome/.ksar
-        String buffer = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n\n\n<ConfiG>\n</ConfiG>\n";
-        boolean home = new File(userhome + ".ksarcfg").mkdir();
-        if (!home) {
-            return 0;
-        }
+		return hostHistory;
+	}
 
-        BufferedWriter out = null;
-        try {
-            out = new BufferedWriter(new FileWriter(userhome + ".ksarcfg" + fileseparator + "Config.xml"));
-            out.write(buffer);
-            out.flush();
-            out.close();
-            return 1;
-        } catch (IOException e) {
-            return 0;
-        }
+	public void addHost_history(String e) {
+		ArrayList<String> tmp = getHost_history();
+		tmp.add(e);
 
-    }
+		for (int i = 0; i < tmp.size(); i++) {
+			myPref.put("HostHistory_" + i, tmp.get(i));
+		}
 
-    public static int getLocal_configfile() {
-        return local_configfile;
-    }
+		myPref.setProperty("HostHistory", String.valueOf(tmp.size()));
 
-    public static void setLocal_configfile(int local_configfile) {
-        Config.local_configfile = local_configfile;
-    }
+	}
 
-    public static String getLinuxDateFormat() {
-        return LinuxDateFormat;
-    }
+	public static Font getDEFAULT_FONT() {
+		return DEFAULT_FONT;
+	}
 
-    public static void setLinuxDateFormat(String LinuxDateFormat) {
-        Config.LinuxDateFormat = LinuxDateFormat;
-    }
+	public int getImageHeight() {
 
-    
-    
-    private static String landf;
-    private static File lastReadDirectory;
-    private static File lastExportDirectory;
-    private static String lastCommand;
-    private static int number_host_history;
-    private static int local_configfile;
-    private static ArrayList<String> host_history = new ArrayList<String>();
-    public static final Font DEFAULT_FONT = new Font("SansSerif", Font.BOLD, 18);
+		int res = 600;
 
-    private static String LinuxDateFormat;
-    private static String PDFPageFormat;
-    private static int ImageWidth;
-    private static int ImageHeight;
-    
+		try {
+			Integer.parseInt(myPref.getProperty("ImageHeight", "600"));
+		} catch (NumberFormatException e) {
+			// it's ok to fail
+		}
+
+		return res;
+	}
+
+	public void setImageHeight(int ImageHeight) {
+		myPref.setProperty("ImageHeight", String.valueOf(ImageHeight));
+	}
+
+	public int getImageWidth() {
+
+		int res = 800;
+
+		try {
+			Integer.parseInt(myPref.getProperty("ImageWidth", "800"));
+		} catch (NumberFormatException e) {
+			// it's ok to fail
+		}
+
+		return res;
+
+	}
+
+	public void setImageWidth(int ImageWidth) {
+		myPref.setProperty("ImageWidth", String.valueOf(ImageWidth));
+	}
+
+	public String getPDFPageFormat() {
+		return myPref.getProperty("PDFPageFormat", "A4");
+	}
+
+	public void setPDFPageFormat(String PDFPageFormat) {
+		myPref.put("PDFPageFormat", PDFPageFormat);
+	}
+
+	public String getLinuxDateFormat() {
+		return myPref.getProperty("LinuxDateFormat", "Always ask");
+	}
+
+	public void setLinuxDateFormat(String LinuxDateFormat) {
+		myPref.put("LinuxDateFormat", LinuxDateFormat);
+	}
+
+	public ArrayList<String> getIgnoreLinesBeginingWith() {
+		ArrayList<String> ignoreLine = new ArrayList<>();
+
+		String toparse = myPref.getProperty("IgnoreLinesBeginingWith", "Average:@|@##@|@Summary@|@Moyenne");
+		ignoreLine.addAll(Arrays.asList(toparse.split("@|@")));
+
+		return ignoreLine;
+
+	}
+
+
+	public String getVersionNumber() {
+		return myPref.getProperty("VersionNumber");
+	}
+
+	public String getDateFormat() {
+		return myPref.getProperty("HeaderDateFormat");
+	}
+	
+	public File getConfigFolder(){
+		return configfolder;
+	}
+
 }

@@ -17,7 +17,7 @@ public abstract class OSParser extends AllParser {
         String [] s = header.split("\\s+");
         mysar = hissar;
         ParserName = s[0];
-        myosconfig = GlobalOptions.getOSinfo(s[0]);
+        myosconfig = GlobalOptions.getInstance().getOSinfo(s[0]);
         parse_header(header);
     }
     

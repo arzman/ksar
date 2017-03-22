@@ -37,8 +37,8 @@ public class kSar {
             dataview.setSelected(true);
         } catch (PropertyVetoException vetoe) {
         }
-        if (GlobalOptions.getCLfilename() != null) {
-            do_fileread(GlobalOptions.getCLfilename());
+        if (GlobalOptions.getInstance().getCLfilename() != null) {
+            do_fileread(GlobalOptions.getInstance().getCLfilename());
         }
     }
 
@@ -115,7 +115,7 @@ public class kSar {
 
                 String ParserType = columns[0];
                 try {
-                    Class classtmp = GlobalOptions.getParser(ParserType);
+                    Class classtmp = GlobalOptions.getInstance().getParser(ParserType);
                     if (classtmp != null) {
                         if (myparser == null) {
                             myparser = (AllParser) classtmp.newInstance();
@@ -143,10 +143,10 @@ public class kSar {
                 }
 
                 parser_return = myparser.parse(current_line, columns);
-                if (parser_return == 1 && GlobalOptions.isDodebug()) {
+                if (parser_return == 1 && GlobalOptions.getInstance().isDodebug()) {
                     System.out.println("### " + current_line);
                 }
-                if (parser_return < 0 && GlobalOptions.isDodebug()) {
+                if (parser_return < 0 && GlobalOptions.getInstance().isDodebug()) {
                     System.out.println("ERR " + current_line);
                 }
 
@@ -164,7 +164,7 @@ public class kSar {
         }
 
         parsing_end = System.currentTimeMillis();
-        if (GlobalOptions.isDodebug()) {
+        if (GlobalOptions.getInstance().isDodebug()) {
             System.out.println("time to parse: " + (parsing_end - parsing_start) + "ms ");
             if (myparser != null) {
                 System.out.println("number of datesamples: " + myparser.DateSamples.size());

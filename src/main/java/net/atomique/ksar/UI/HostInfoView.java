@@ -30,7 +30,7 @@ public class HostInfoView extends javax.swing.JDialog {
         AliasField.setText(hostinfo.getAlias());
         jTextArea1.setText(hostinfo.getDescription());
         memboxcombo.setSelectedItem(hostinfo.getMemBlockSize().toString());
-        setLocationRelativeTo(GlobalOptions.getUI());
+        setLocationRelativeTo(GlobalOptions.getInstance().getUI());
     }
 
     /** This method is called from within the constructor to
@@ -137,7 +137,7 @@ public class HostInfoView extends javax.swing.JDialog {
         hostinfo.setAlias(AliasField.getText());
         hostinfo.setDescription(jTextArea1.getText());
         hostinfo.setMemBlockSize(memboxcombo.getSelectedItem().toString());
-        GlobalOptions.addHostInfo(hostinfo);
+        GlobalOptions.getInstance().addHostInfo(hostinfo);
     }//GEN-LAST:event_OkButtonActionPerformed
 
    

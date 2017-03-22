@@ -4,14 +4,12 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.Arrays;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.Locale;
-import java.util.Set;
 
 import net.atomique.ksar.Config;
-import net.atomique.ksar.OSParser;
 import net.atomique.ksar.GlobalOptions;
+import net.atomique.ksar.OSParser;
 import net.atomique.ksar.Graph.Graph;
 import net.atomique.ksar.Graph.List;
 import net.atomique.ksar.UI.LinuxDateFormat;
@@ -20,15 +18,20 @@ import net.atomique.ksar.XML.GraphConfig;
 public class Linux extends OSParser {
 
     private String LinuxDateFormat;
-    private LocalTime prevParseTime;
+    
+    private ArrayList<String> IgnoreLinesBeginningWith;
 
-    private final Set<String> IgnoreLinesBeginningWith = new HashSet<String>(Arrays.asList(
-            new String[] {"Average:","##","Summary"}
-    ));
+    
+    public Linux() {
+		
+    	LinuxDateFormat = Config.getInstance().getLinuxDateFormat();
+    	IgnoreLinesBeginningWith = Config.getInstance().getIgnoreLinesBeginingWith();
+	}
+    
+
 
     public void parse_header(String s) {
-
-        LinuxDateFormat = Config.getLinuxDateFormat();
+ 
         String[] columns = s.split("\\s+");
         String tmpstr;
         setOstype(columns[0]);
@@ -62,14 +65,13 @@ public class Linux extends OSParser {
     }
 
     private void askDateFormat(String s) {
-        if ( GlobalOptions.hasUI() ) {
-            LinuxDateFormat tmp = new LinuxDateFormat(GlobalOptions.getUI(),true);
+        if ( GlobalOptions.getInstance().hasUI() ) {
+            LinuxDateFormat tmp = new LinuxDateFormat(GlobalOptions.getInstance().getUI(),true);
             tmp.setTitle(s);
             if ( tmp.isOk()) {
                 LinuxDateFormat=tmp.getDateFormat();
                 if ( tmp.hasToRemenber() ) {
-                    Config.setLinuxDateFormat(tmp.getDateFormat());
-                    Config.save();
+                    Config.getInstance().setLinuxDateFormat(tmp.getDateFormat());
                 }
             }
         }
@@ -89,7 +91,7 @@ public class Linux extends OSParser {
 
         try {
             if ( timeColumn == 2 ) {
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern(timeFormat,Locale.US);
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern(timeFormat,Locale.getDefault());
                 parsetime = LocalTime.parse(columns[0]+" "+columns[1], formatter);
             } else {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern(timeFormat);
@@ -162,7 +164,7 @@ public class Linux extends OSParser {
 
         if (lastStat != null) {
             if (!lastStat.equals(currentStat) ) {
-                if (  GlobalOptions.isDodebug())  {
+                if (  GlobalOptions.getInstance().isDodebug())  {
                 System.out.println("Stat change from " + lastStat + " to " + currentStat);
                 }
                 lastStat = currentStat;

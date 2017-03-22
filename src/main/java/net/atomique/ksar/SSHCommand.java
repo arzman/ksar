@@ -59,16 +59,16 @@ public class SSHCommand extends Thread {
 
     private void showDialog() {
 
-        Iterator<String> ite = GlobalOptions.getHistoryList().keySet().iterator();
+        Iterator<String> ite = GlobalOptions.getInstance().getInstance().getHistoryList().keySet().iterator();
         while (ite.hasNext()) {
-            CnxHistory tmp = GlobalOptions.getHistory(ite.next());
+            CnxHistory tmp = GlobalOptions.getInstance().getInstance().getHistory(ite.next());
             userhostModel.addElement(tmp.getLink());
         }
         initComponents(dialog);
         if ( HostComboBox.getItemCount() > 0) {
             HostComboBox.setSelectedIndex(0);
         }
-        dialog.setLocationRelativeTo(GlobalOptions.getUI());
+        dialog.setLocationRelativeTo(GlobalOptions.getInstance().getInstance().getUI());
         dialog.setVisible(true);
     }
 
@@ -186,7 +186,7 @@ public class SSHCommand extends Thread {
     private void HostComboBoxActionPerformed(java.awt.event.ActionEvent evt) {
         JComboBox cb = (JComboBox) evt.getSource();
         String link = (String) cb.getSelectedItem();
-        CnxHistory tmp = GlobalOptions.getHistory(link);
+        CnxHistory tmp = GlobalOptions.getInstance().getInstance().getHistory(link);
         commandModel.removeAllElements();
         if (tmp != null) {
             Iterator<String> ite = tmp.getCommandList().iterator();
@@ -226,8 +226,8 @@ public class SSHCommand extends Thread {
         try {
             session.connect();
         } catch (JSchException ex) {
-            if (GlobalOptions.hasUI()) {
-                JOptionPane.showMessageDialog(GlobalOptions.getUI(), "Unable to connect", "SSH error", JOptionPane.ERROR_MESSAGE);
+            if (GlobalOptions.getInstance().hasUI()) {
+                JOptionPane.showMessageDialog(GlobalOptions.getInstance().getUI(), "Unable to connect", "SSH error", JOptionPane.ERROR_MESSAGE);
                 mysar.cleared();
             } else {
                 System.err.println("Err: unable to connect");
@@ -237,8 +237,8 @@ public class SSHCommand extends Thread {
         try {
             channel = session.openChannel("exec");
         } catch (JSchException ex) {
-            if (GlobalOptions.hasUI()) {
-                JOptionPane.showMessageDialog(GlobalOptions.getUI(), "Unable to open Channel", "SSH error", JOptionPane.ERROR_MESSAGE);
+            if (GlobalOptions.getInstance().hasUI()) {
+                JOptionPane.showMessageDialog(GlobalOptions.getInstance().getUI(), "Unable to open Channel", "SSH error", JOptionPane.ERROR_MESSAGE);
                  mysar.cleared();
             } else {
                 System.err.println("Err: unable to open Channel");
@@ -254,8 +254,8 @@ public class SSHCommand extends Thread {
             in = channel.getInputStream();
             err = ((ChannelExec) channel).getErrStream();
         } catch (IOException ex) {
-            if (GlobalOptions.hasUI()) {
-                JOptionPane.showMessageDialog(GlobalOptions.getUI(), "Unable to open pipe", "SSH error", JOptionPane.ERROR_MESSAGE);
+            if (GlobalOptions.getInstance().hasUI()) {
+                JOptionPane.showMessageDialog(GlobalOptions.getInstance().getUI(), "Unable to open pipe", "SSH error", JOptionPane.ERROR_MESSAGE);
                  mysar.cleared();
             } else {
                 System.err.println("Err: unable to open pipe");
@@ -265,8 +265,8 @@ public class SSHCommand extends Thread {
         try {
             channel.connect();
         } catch (JSchException ex) {
-            if (GlobalOptions.hasUI()) {
-                JOptionPane.showMessageDialog(GlobalOptions.getUI(), "Unable to connect Channel", "SSH error", JOptionPane.ERROR_MESSAGE);
+            if (GlobalOptions.getInstance().hasUI()) {
+                JOptionPane.showMessageDialog(GlobalOptions.getInstance().getUI(), "Unable to connect Channel", "SSH error", JOptionPane.ERROR_MESSAGE);
                  mysar.cleared();
             } else {
                 System.err.println("Err: unable to connect Channel");
@@ -276,8 +276,8 @@ public class SSHCommand extends Thread {
         if (channel.isClosed()) {
             System.out.println("exit" + channel.getExitStatus() );
             if (channel.getExitStatus() != 0) {
-                if (GlobalOptions.hasUI()) {
-                    JOptionPane.showMessageDialog(GlobalOptions.getUI(), "There was a problem while retrieving stat", "SSH error", JOptionPane.ERROR_MESSAGE);
+                if (GlobalOptions.getInstance().hasUI()) {
+                    JOptionPane.showMessageDialog(GlobalOptions.getInstance().getUI(), "There was a problem while retrieving stat", "SSH error", JOptionPane.ERROR_MESSAGE);
                      mysar.cleared();
                 } else {
                     System.err.println("Err: Problem during ssh connection");
@@ -286,7 +286,7 @@ public class SSHCommand extends Thread {
             }
         }
         command = tmp.getUsername() + "@" + tmp.getHostname() + "=" + commandComboBox.getSelectedItem();
-        GlobalOptions.addHistory(tmp);
+        GlobalOptions.getInstance().addHistory(tmp);
         return;
 
     }
@@ -321,8 +321,8 @@ public class SSHCommand extends Thread {
                 tmpmessage.append("\n");
             }
             if ( tmpmessage.length() >0 ) {
-                if ( GlobalOptions.hasUI()) {
-                    JOptionPane.showMessageDialog(GlobalOptions.getUI(), tmpmessage.toString(),"SSH error", JOptionPane.ERROR_MESSAGE);
+                if ( GlobalOptions.getInstance().hasUI()) {
+                    JOptionPane.showMessageDialog(GlobalOptions.getInstance().getUI(), tmpmessage.toString(),"SSH error", JOptionPane.ERROR_MESSAGE);
                 }
             }
             myfile.close();
@@ -346,8 +346,8 @@ public class SSHCommand extends Thread {
         public boolean promptYesNo(String str) {
 
             String[] options = {"yes", "no"};
-            if (GlobalOptions.hasUI()) {
-                int foo = JOptionPane.showOptionDialog(GlobalOptions.getUI(), str, "Warning", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);
+            if (GlobalOptions.getInstance().hasUI()) {
+                int foo = JOptionPane.showOptionDialog(GlobalOptions.getInstance().getUI(), str, "Warning", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);
                 return foo == 0;
             } else {
                 return true;
@@ -365,7 +365,7 @@ public class SSHCommand extends Thread {
         public boolean promptPassphrase(String message) {
             if (num_try > 0) {
                 Object[] ob = {passphraseField};
-                int result = JOptionPane.showConfirmDialog(GlobalOptions.getUI(), ob, message, JOptionPane.OK_CANCEL_OPTION);
+                int result = JOptionPane.showConfirmDialog(GlobalOptions.getInstance().getUI(), ob, message, JOptionPane.OK_CANCEL_OPTION);
                 if (result == JOptionPane.OK_OPTION) {
                     passphrase = passphraseField.getText();
                     return true;
@@ -388,8 +388,8 @@ public class SSHCommand extends Thread {
         public boolean promptPassword(String message) {
             if ( num_try > 0 || password != null) {
                 Object[] ob = {passwordField};
-                if (GlobalOptions.hasUI()) {
-                    int result = JOptionPane.showConfirmDialog(GlobalOptions.getUI(), ob, message, JOptionPane.OK_CANCEL_OPTION);
+                if (GlobalOptions.getInstance().hasUI()) {
+                    int result = JOptionPane.showConfirmDialog(GlobalOptions.getInstance().getUI(), ob, message, JOptionPane.OK_CANCEL_OPTION);
                     if (result == JOptionPane.OK_OPTION) {
                         passwd = passwordField.getText();
                         return true;
@@ -443,7 +443,7 @@ public class SSHCommand extends Thread {
                 gbc.gridy++;
             }
 
-            if (JOptionPane.showConfirmDialog(GlobalOptions.getUI(), panel, destination + " : " + name, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION) {
+            if (JOptionPane.showConfirmDialog(GlobalOptions.getInstance().getUI(), panel, destination + " : " + name, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION) {
                 String[] response = new String[prompt.length];
                 StringBuilder t = new StringBuilder();
 
@@ -458,8 +458,8 @@ public class SSHCommand extends Thread {
         }
 
         public void showMessage(String message) {
-            if (GlobalOptions.hasUI()) {
-                JOptionPane.showMessageDialog(GlobalOptions.getUI(), message);
+            if (GlobalOptions.getInstance().hasUI()) {
+                JOptionPane.showMessageDialog(GlobalOptions.getInstance().getUI(), message);
             } else {
                 return;
             }

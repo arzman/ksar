@@ -63,12 +63,12 @@ public class FilePDF extends PdfPageEventHelper implements Runnable {
     public void run() {
         total_pages+=mysar.get_page_to_print();
         org.jfree.text.TextUtilities.setUseDrawRotatedStringWorkaround(true);
-        if ("A4".equals(Config.getPDFPageFormat())) {
+        if ("A4".equals(Config.getInstance().getPDFPageFormat())) {
             document = new Document(PageSize.A4.rotate());
             pdfheight=document.getPageSize().getHeight();
-        }else if ("LEGAL".equals(Config.getPDFPageFormat())) {
+        }else if ("LEGAL".equals(Config.getInstance().getPDFPageFormat())) {
             document = new Document(PageSize.LEGAL.rotate());
-        } else if ("LETTER".equals(Config.getPDFPageFormat())) {
+        } else if ("LETTER".equals(Config.getInstance().getPDFPageFormat())) {
             document = new Document(PageSize.LETTER.rotate());
         } else {
             document = new Document(PageSize.A4.rotate());
