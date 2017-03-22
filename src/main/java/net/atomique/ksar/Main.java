@@ -62,7 +62,7 @@ public class Main {
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
 
             public void run() {
-                GlobalOptions.getInstance().setUI(new Desktop());
+            	GlobalOptions.getInstance().loadParserConfiguration();
                 SwingUtilities.updateComponentTreeUI(GlobalOptions.getInstance().getUI());
                 GlobalOptions.getInstance().getUI().add_window();
                 GlobalOptions.getInstance().getUI().maxall();
@@ -111,7 +111,9 @@ public class Main {
             }
         }
 
+        
         make_ui();
+
     }
 
     public static void exit_error(final String message) {

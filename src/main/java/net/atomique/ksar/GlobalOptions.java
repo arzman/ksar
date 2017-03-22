@@ -9,9 +9,13 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.channels.Channels;
+import java.nio.channels.FileChannel;
+import java.nio.channels.ReadableByteChannel;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.logging.Level;
@@ -29,27 +33,24 @@ import net.atomique.ksar.XML.OSConfig;
  */
 public class GlobalOptions {
 
-	
-	private Desktop UI ;
+	private Desktop UI;
 
-	private  HashMap<String, ColumnConfig> columnlist;
-	private  HashMap<String, OSConfig> OSlist;
-	private  HashMap<String, CnxHistory> HistoryList;
-	private  HashMap<String, HostInfo> HostInfoList;
-	private  boolean dodebug = false;
-	private  String CLfilename = null;
-	private  HashMap<String, Class> ParserMap;
-	private  boolean firstrun = true;
-	
-	
+	private HashMap<String, ColumnConfig> columnlist;
+	private HashMap<String, OSConfig> OSlist;
+	private HashMap<String, CnxHistory> HistoryList;
+	private HashMap<String, HostInfo> HostInfoList;
+	private boolean dodebug = false;
+	private String CLfilename = null;
+	private HashMap<String, Class> ParserMap;
+
 	private static GlobalOptions instance;
 
 	public static GlobalOptions getInstance() {
-		
-		if(instance==null){
+
+		if (instance == null) {
 			instance = new GlobalOptions();
 		}
-		
+
 		return instance;
 	}
 
@@ -62,9 +63,9 @@ public class GlobalOptions {
 
 	private GlobalOptions() {
 		String[] OSParserNames = { "AIX", "HPUX", "Linux", "SunOS" };
-		String filename = null;
-		InputStream is = null;
-		XMLConfig tmp;
+
+		UI = new Desktop();
+
 		columnlist = new HashMap<String, ColumnConfig>();
 		OSlist = new HashMap<String, OSConfig>();
 		ParserMap = new HashMap<String, Class>();
@@ -81,59 +82,98 @@ public class GlobalOptions {
 
 		}
 
-		filename = Config.getInstance().getConfigFolder().getAbsolutePath() + File.separator + "Config.xml";
-		if (new File(filename).canRead()) {
+	}
 
-			try {
-				tmp = new XMLConfig(new FileInputStream(filename));
-			} catch (FileNotFoundException e) {
-				is = this.getClass().getResourceAsStream("/Config.xml");
-				tmp = new XMLConfig(is);
+	public void loadParserConfiguration() {
+
+		XMLConfig tmp;
+		String filename = Config.getInstance().getConfigFolder().getAbsolutePath() + File.separator + "Config.xml";
+		File configXmlFile = new File(filename);
+
+		if (!configXmlFile.exists()) {
+
+			try (FileOutputStream fos = new FileOutputStream(configXmlFile);
+					ReadableByteChannel src = Channels
+							.newChannel(this.getClass().getResourceAsStream("/Config.xml"));) {
+
+				FileChannel dest = fos.getChannel();
+
+				dest.transferFrom(src, 0, Long.MAX_VALUE);
+
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 
-		} else {
-			is = this.getClass().getResourceAsStream("/Config.xml");
-			tmp = new XMLConfig(is);
 		}
 
-		for (String parsername : ParserMap.keySet()) {
-			is = this.getClass().getResourceAsStream("/" + parsername + ".xml");
-			if (is != null) {
-				tmp.load_config(is);
+		try {
+			tmp = new XMLConfig(new FileInputStream(filename));
+
+			for (String parsername : ParserMap.keySet()) {
+
+				
+				String parserfilename = Config.getInstance().getConfigFolder().getAbsolutePath() + File.separator + parsername+".xml";
+				File parserfilenameFile = new File(parserfilename);
+				
+				
+				if (!parserfilenameFile.exists()) {
+
+					try (FileOutputStream fos = new FileOutputStream(parserfilenameFile);
+							ReadableByteChannel src = Channels
+									.newChannel(this.getClass().getResourceAsStream("/"+parsername+".xml"));) {
+
+						FileChannel dest = fos.getChannel();
+
+						dest.transferFrom(src, 0, Long.MAX_VALUE);
+
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+
+				}
+				
+				
+				InputStream is = this.getClass().getResourceAsStream("/" + parsername + ".xml");
+				if (is != null) {
+					tmp.load_config(new FileInputStream(parserfilename));
+				}
 			}
-		}
 
-		filename = Config.getInstance().getConfigFolder().getAbsolutePath() + File.separator + "History.xml";
-		if (new File(filename).canRead()) {
-			tmp.load_config(filename);
+			filename = Config.getInstance().getConfigFolder().getAbsolutePath() + File.separator + "History.xml";
+			if (new File(filename).canRead()) {
+				tmp.load_config(filename);
+			}
+
+		} catch (FileNotFoundException e) {
+			Logger.getLogger(GlobalOptions.class.getName()).log(Level.SEVERE, "Can't read config.xml file", e);
 		}
 
 	}
 
-	public  Desktop getUI() {
+	public Desktop getUI() {
 		return UI;
 	}
 
 	public void setUI(Desktop UI) {
-		UI = UI;
+		this.UI = UI;
 	}
 
-	public  HashMap<String, ColumnConfig> getColorlist() {
+	public HashMap<String, ColumnConfig> getColorlist() {
 		return columnlist;
 	}
 
-	public  HashMap<String, OSConfig> getOSlist() {
+	public HashMap<String, OSConfig> getOSlist() {
 		return OSlist;
 	}
 
-	public  ColumnConfig getColumnConfig(String s) {
+	public ColumnConfig getColumnConfig(String s) {
 		if (columnlist.isEmpty()) {
 			return null;
 		}
 		return columnlist.get(s);
 	}
 
-	public  Color getDataColor(String s) {
+	public Color getDataColor(String s) {
 		ColumnConfig tmp = columnlist.get(s);
 		if (tmp != null) {
 			return tmp.getData_color();
@@ -143,27 +183,27 @@ public class GlobalOptions {
 		return null;
 	}
 
-	public  OSConfig getOSinfo(String s) {
+	public OSConfig getOSinfo(String s) {
 		return OSlist.get(s);
 	}
 
-	public  boolean isDodebug() {
+	public boolean isDodebug() {
 		return dodebug;
 	}
 
-	public  void setDodebug(boolean do_debug) {
+	public void setDodebug(boolean do_debug) {
 		dodebug = do_debug;
 	}
 
-	public  String getCLfilename() {
+	public String getCLfilename() {
 		return CLfilename;
 	}
 
-	public  void setCLfilename(String CL_filename) {
+	public void setCLfilename(String CL_filename) {
 		CLfilename = CL_filename;
 	}
 
-	public  Class getParser(String s) {
+	public Class getParser(String s) {
 		String tmp = s.replaceAll("-", "");
 		if (ParserMap.isEmpty()) {
 			return null;
@@ -171,11 +211,11 @@ public class GlobalOptions {
 		return ParserMap.get(tmp);
 	}
 
-	public  HashMap<String, HostInfo> getHostInfoList() {
+	public HashMap<String, HostInfo> getHostInfoList() {
 		return HostInfoList;
 	}
 
-	public  HostInfo getHostInfo(String s) {
+	public HostInfo getHostInfo(String s) {
 		if (HostInfoList.isEmpty()) {
 			return null;
 		}
@@ -187,11 +227,11 @@ public class GlobalOptions {
 		saveHistory();
 	}
 
-	public  HashMap<String, CnxHistory> getHistoryList() {
+	public HashMap<String, CnxHistory> getHistoryList() {
 		return HistoryList;
 	}
 
-	public  CnxHistory getHistory(String s) {
+	public CnxHistory getHistory(String s) {
 		if (HistoryList.isEmpty()) {
 			return null;
 		}
