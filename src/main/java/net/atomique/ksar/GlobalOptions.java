@@ -21,11 +21,11 @@ import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import net.atomique.ksar.UI.Desktop;
-import net.atomique.ksar.XML.CnxHistory;
-import net.atomique.ksar.XML.ColumnConfig;
-import net.atomique.ksar.XML.HostInfo;
-import net.atomique.ksar.XML.OSConfig;
+import net.atomique.ksar.ui.Desktop;
+import net.atomique.ksar.xml.CnxHistory;
+import net.atomique.ksar.xml.ColumnConfig;
+import net.atomique.ksar.xml.HostInfo;
+import net.atomique.ksar.xml.OSConfig;
 
 /**
  *
@@ -74,7 +74,7 @@ public class GlobalOptions {
 
 		for (String OSName : OSParserNames) {
 			try {
-				Class tmpclass = Class.forName("net.atomique.ksar.Parser." + OSName);
+				Class tmpclass = Class.forName("net.atomique.ksar.parser." + OSName);
 				ParserMap.put(OSName, tmpclass);
 			} catch (ClassNotFoundException ex) {
 				ex.printStackTrace();

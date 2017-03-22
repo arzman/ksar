@@ -11,6 +11,9 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.UIKeyboardInteractive;
 import com.jcraft.jsch.UserInfo;
+
+import net.atomique.ksar.xml.CnxHistory;
+
 import java.awt.Container;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -31,7 +34,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-import net.atomique.ksar.XML.CnxHistory;
 
 /**
  *
@@ -39,12 +41,12 @@ import net.atomique.ksar.XML.CnxHistory;
  */
 public class SSHCommand extends Thread {
 
-    public SSHCommand(kSar hissar, String cmd) {
+    public SSHCommand(KSar hissar, String cmd) {
         mysar = hissar;
         command = cmd;
     }
 
-    public SSHCommand(kSar hissar) {
+    public SSHCommand(KSar hissar) {
         mysar = hissar;
         showDialog();
     }
@@ -507,7 +509,7 @@ public class SSHCommand extends Thread {
     private DefaultComboBoxModel userhostModel = new DefaultComboBoxModel();
     private DefaultComboBoxModel commandModel = new DefaultComboBoxModel();
     private String command;
-    private kSar mysar;
+    private KSar mysar;
     private JDialog dialog = new JDialog();
     private JSch jsch = null;
     private Session session = null;

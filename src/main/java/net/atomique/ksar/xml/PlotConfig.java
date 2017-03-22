@@ -1,0 +1,92 @@
+package net.atomique.ksar.xml;
+
+import java.text.NumberFormat;
+
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.data.Range;
+
+import net.atomique.ksar.graph.IEEE1541Number;
+
+public class PlotConfig {
+
+    public PlotConfig(String s) {
+        Title = s;
+    }
+
+    public String[] getHeader() {
+        return Header;
+    }
+
+    public String getTitle() {
+        return Title;
+    }
+
+    public void setHeaderStr(String s) {
+        this.Header = s.split("\\s+");
+        HeaderStr = s;
+    }
+
+    public String getHeaderStr() {
+        return HeaderStr;
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public void setSize(int size) {
+        this.size = size;
+    }
+
+    public void setSize(String s) {
+        Integer tmp = new Integer(s);
+        if (tmp == null) {
+            return;
+        }
+        this.size = tmp.intValue();
+    }
+
+
+    public NumberAxis getAxis() {
+        NumberAxis tmp = new NumberAxis(Title);
+
+        if (base == 1024) {
+            NumberFormat decimalformat1 = new IEEE1541Number(factor.intValue());
+            tmp.setNumberFormatOverride(decimalformat1);
+        }
+
+        if (range != null) {
+            tmp.setRange(range);
+        }
+        return tmp;
+    }
+
+    public void setBase(String s) {
+        if (s == null) {
+            return;
+        }
+        base = Integer.parseUnsignedInt(s);
+    }
+
+    public void setFactor(String s) {
+        factor = Double.parseDouble(s);
+    }
+
+    public void setRange(String s) {
+        String[] t = s.split(",");
+        if (t.length == 2) {
+            Double min = Double.parseDouble(t[0]);
+            Double max = Double.parseDouble(t[1]);
+            range = new Range(min, max);
+        }
+    }
+    
+
+    private Double factor = null;
+    private int base = 0;
+    private Range range = null;
+    private int size = 1;
+    private String Title = null;
+    private String[] Header = null;
+    private String HeaderStr = null;
+}

@@ -10,8 +10,9 @@ import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-import net.atomique.ksar.UI.Desktop;
-import net.atomique.ksar.UI.SplashScreen;
+
+import net.atomique.ksar.ui.Desktop;
+import net.atomique.ksar.ui.SplashScreen;
 
 /**
  *
