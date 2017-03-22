@@ -18,7 +18,7 @@ import javax.swing.JFileChooser;
  */
 public class FileRead extends Thread {
 
-    public FileRead(kSar hissar) {
+    public FileRead(KSar hissar) {
         mysar = hissar;
         JFileChooser fc = new JFileChooser();
         if (Config.getInstance().getLastReadDirectory() != null) {
@@ -35,7 +35,7 @@ public class FileRead extends Thread {
         }
     }
 
-    public FileRead(kSar hissar, String filename) {
+    public FileRead(KSar hissar, String filename) {
         mysar = hissar;
         sarfilename = filename;
     }
@@ -78,7 +78,7 @@ public class FileRead extends Thread {
 
         close();
     }
-    private kSar mysar = null;
+    private KSar mysar = null;
     private String sarfilename = null;
     private FileReader tmpfile = null;
     private BufferedReader myfilereader = null;

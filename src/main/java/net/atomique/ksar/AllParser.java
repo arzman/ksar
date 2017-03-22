@@ -6,7 +6,8 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.TreeSet;
-import net.atomique.ksar.XML.OSConfig;
+
+import net.atomique.ksar.xml.OSConfig;
 
 public abstract class AllParser {
 
@@ -24,7 +25,7 @@ public abstract class AllParser {
 
 	abstract public void updateUITitle();
 
-	protected kSar mysar;
+	protected KSar mysar;
 	protected OSConfig myosconfig;
 	protected String ParserName;
 
@@ -45,14 +46,14 @@ public abstract class AllParser {
 		timeColumn = 1;
 	}
 
-	public void init(kSar hissar, String header) {
+	public void init(KSar hissar, String header) {
 		String[] s = header.split("\\s+");
 		mysar = hissar;
 		ParserName = s[0];
 		parse_header(header);
 	}
 
-	public AllParser(kSar hissar, String header) {
+	public AllParser(KSar hissar, String header) {
 		init(hissar, header);
 	}
 

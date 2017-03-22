@@ -14,20 +14,22 @@ import java.util.logging.Logger;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import net.atomique.ksar.XML.CnxHistory;
-import net.atomique.ksar.XML.ColumnConfig;
-import net.atomique.ksar.XML.GraphConfig;
-import net.atomique.ksar.XML.HostInfo;
-import net.atomique.ksar.XML.OSConfig;
-import net.atomique.ksar.XML.PlotConfig;
-import net.atomique.ksar.XML.StackConfig;
-import net.atomique.ksar.XML.StatConfig;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
+
+import net.atomique.ksar.xml.CnxHistory;
+import net.atomique.ksar.xml.ColumnConfig;
+import net.atomique.ksar.xml.GraphConfig;
+import net.atomique.ksar.xml.HostInfo;
+import net.atomique.ksar.xml.OSConfig;
+import net.atomique.ksar.xml.PlotConfig;
+import net.atomique.ksar.xml.StackConfig;
+import net.atomique.ksar.xml.StatConfig;
 
 /**
  *

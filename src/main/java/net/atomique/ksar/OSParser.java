@@ -5,7 +5,8 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.HashMap;
 import java.util.Map;
-import net.atomique.ksar.XML.OSConfig;
+
+import net.atomique.ksar.xml.OSConfig;
 
 public abstract class OSParser extends AllParser {
 
@@ -13,7 +14,7 @@ public abstract class OSParser extends AllParser {
         
     }
 
-    public void init (kSar hissar, String header) {
+    public void init (KSar hissar, String header) {
         String [] s = header.split("\\s+");
         mysar = hissar;
         ParserName = s[0];
@@ -21,7 +22,7 @@ public abstract class OSParser extends AllParser {
         parse_header(header);
     }
     
-    public OSParser(kSar hissar,String header) {
+    public OSParser(KSar hissar,String header) {
         init(hissar, header);
     }
 

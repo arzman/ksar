@@ -21,7 +21,7 @@ import javax.swing.JOptionPane;
  */
 public class LocalCommand extends Thread {
 
-    public LocalCommand(kSar hissar) {
+    public LocalCommand(KSar hissar) {
         mysar = hissar;
         try {
             command = JOptionPane.showInputDialog("Enter local command ", "sar -A");
@@ -43,7 +43,7 @@ public class LocalCommand extends Thread {
         return;
     }
 
-    public LocalCommand(kSar hissar, String hiscommand) {
+    public LocalCommand(KSar hissar, String hiscommand) {
         mysar = hissar;
         command = hiscommand;
         try {
@@ -102,7 +102,7 @@ public class LocalCommand extends Thread {
             return null;
         }
     }
-    private kSar mysar = null;
+    private KSar mysar = null;
     private InputStream in = null;
     private String command = null;
     private BufferedReader myfilereader = null;
